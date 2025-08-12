@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trezo - Home</title>
+    <link rel="stylesheet" th:href="@{/css/buyer-home.css}" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F8F9FA;
+        }
+
+        .nav-bar {
+            background-color: #1E1F26;
+            color: white;
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-bar .site-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #F72585;
+        }
+
+        .nav-bar .nav-link {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        .search-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .search-container {
+            display: none;
+            padding: 10px 20px;
+            background-color: #eeeeee;
+            justify-content: center;
+        }
+
+        .search-container.active {
+            display: flex;
+        }
+
+        .search-form input[type="text"] {
+            width: 300px;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-form button {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: none;
+            background-color: #F72585;
+            color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            justify-items: center;
+            margin-top: 20px;
+        }
+
+        /* ✅ ADDED: Style to remove underline from the new product link */
+        .product-card-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .product-card {
+            width: 100%;
+            max-width: 250px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            /* Added to ensure content is aligned correctly */
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 12px 24px rgba(58, 12, 163, 0.2);
+            border-color: #3A0CA3;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .product-info {
+            text-align: left;
+            margin-top: 10px;
+            flex-grow: 1; /* Allows this section to grow, pushing actions to the bottom */
+        }
+
+        .product-info h3 {
+            font-size: 1.1rem;
+            margin: 5px 0;
+        }
+
+        .product-info p {
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #3A0CA3;
+            margin-top: 5px;
+        }
+
+        .category {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .product-actions {
+            margin-top: 10px;
+            display: flex;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            background-color: #F72585;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: #3A0CA3;
+        }
+
+        /* Media queries remain the same */
+        @media (max-width: 1024px) { .product-list { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .product-list { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .product-list { grid-template-columns: 1fr; } }
+    </style>
+
+    <script>
+        function toggleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            searchBar.classList.toggle('active');
+        }
+    </script>
+</head>
+<body>
+
+<nav class="nav-bar">
+    <span class="site-title">Trezo</span>
+    <h1>Welcome, <span th:text="${username}">User</span>!</h1>
+
+    <div>
+        <button class="search-toggle" onclick="toggleSearch()">
+            <i class="fas fa-search"></i>
+        </button>
+        <a th:href="@{/cart/view}" class="nav-link">🛒Cart</a>
+        <a th:href="@{/wishlist}" class="nav-link">Wishlist</a>
+        <a th:href="@{/logout}" class="nav-link">Logout</a>
+    </div>
+</nav>
+
+<div class="search-container" id="searchBar">
+    <form th:action="@{/products/search}" method="get" class="search-form">
+        <input type="text" name="query" placeholder="Search for products..." required />
+        <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+</div>
+
+<div class="container">
+    <h2 th:text="${#lists.isEmpty(products)} ? 'No products found' : 'All Products'"></h2>
+
+    <div class="product-list">
+        <a th:each="product : ${products}" th:href="@{/products/{id}(id=${product.id})}" class="product-card-link">
+            <div class="product-card">
+                <img th:src="${product.imageUrl != null} ? ${product.imageUrl} : @{/images/default-product.png}"
+                     alt="Product Image" class="product-img"/>
+
+                <div class="product-info">
+                    <h3 th:text="${product.name}">Product Name</h3>
+                    <p th:text="${product.description}">Description</p>
+                    <div class="category" th:text="'Category: ' + ${product.category.name}">Category</div>
+                    <div class="price" th:text="'₹' + ${product.price}">₹0</div>
+                </div>
+
+                <div class="product-actions">
+                    <button type="button" class="action-btn">View Details</button>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

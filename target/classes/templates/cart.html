@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trezo | Shopping Cart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #222;
+        }
+
+        .trezo-cart-container {
+            max-width: 1100px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 24px;
+            border: 1px solid #d4d4d4;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 43, 91, 0.08);
+        }
+
+        .cart-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #002b5b;
+            border-bottom: 3px solid #c1f900;
+            padding-bottom: 12px;
+            margin-bottom: 24px;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cart-table th,
+        .cart-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e6e6e6;
+            text-align: left;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-info img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .product-info span {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .remove-btn {
+            background: #fff;
+            color: #002b5b;
+            border: 1px solid #002b5b;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .remove-btn:hover {
+            background-color: #ffe4e4;
+            border-color: #b30000;
+            color: #b30000;
+        }
+
+        .cart-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            font-size: 18px;
+        }
+
+        .summary-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #002b5b;
+        }
+
+        .checkout-btn {
+            background-color: #c1f900;
+            border: none;
+            color: #002b5b;
+            padding: 10px 26px;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background-color: #a5e100;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        button {
+            font-weight: 600;
+            padding: 4px 10px;
+            background: #002b5b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin: 0 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #001d3a;
+        }
+
+        a {
+            color: #002b5b;
+            text-decoration: underline;
+        }
+
+        a:hover {
+            color: #c1f900;
+        }
+    </style>
+</head>
+<body>
+
+<div th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
+    <div class="trezo-cart-container">
+        <div class="cart-title">Shopping Cart</div>
+
+        <table class="cart-table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cartItems}">
+                <td>
+                    <div class="product-info">
+                        <img th:src="${item.product.imageUrl != null} ? ${item.product.imageUrl} : @{/images/default-product.png}" alt="Product"/>
+                        <span th:text="${item.product.name}"></span>
+                    </div>
+                </td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(item.product.price, 2, 2)}"></td>
+                <td>
+                    <form th:action="@{/cart/decrease/{id}(id=${item.id})}" method="post" style="display: inline;">
+                        <button type="submit">-</button>
+                    </form>
+                    <span th:text="${item.quantity}">1</span>
+                    <form th:action="@{/cart/increase/{id}(id=${item.id})}" method="post" style="display: inline;">
+                        <button type="submit">+</button>
+                    </form>
+                </td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(item.getSubtotal(), 2, 2)}"></td>
+                <td>
+                    <form th:action="@{|/cart/remove/${item.id}|}" method="post">
+                        <button type="submit" class="remove-btn">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <div>
+                <span>Total:</span>
+                <span class="summary-value" id="totalAmount" th:data-total="${total}" th:text="'₹' + ${#numbers.formatDecimal(total, 2, 2)}"></span>
+            </div>
+            <button id="pay-btn" class="checkout-btn">Proceed to Pay</button>
+        </div>
+    </div>
+</div>
+
+<div th:if="${cartItems == null or #lists.isEmpty(cartItems)}">
+    <div class="trezo-cart-container">
+        <div class="cart-title">Shopping Cart</div>
+        <div class="empty-cart">
+            <p>Your shopping cart is empty. 🛒</p>
+            <a th:href="@{/buyer/home}">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script th:inline="javascript">
+    const payButton = document.getElementById('pay-btn');
+    if (payButton) {
+        payButton.onclick = async function(e) {
+            e.preventDefault();
+
+            const totalAmount = document.getElementById('totalAmount').getAttribute('data-total');
+
+            const response = await fetch('/api/payment/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: totalAmount })
+            });
+
+            const order = await response.json();
+
+            const options = {
+                "key": [[${@environment.getProperty('razorpay.key.id')}]],
+                "amount": order.amount,
+                "currency": "INR",
+                "name": "Trezo",
+                "description": "Payment for Order #" + order.receipt,
+                "order_id": order.id,
+                "handler": function (response){
+                    alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    window.location.href = '/buyer/home';
+                },
+                "prefill": {
+                    "name": "Your Name",
+                    "email": "your.email@example.com",
+                    "contact": "9000090000"
+                },
+                "theme": { "color": "#002b5b" }
+            };
+
+            const rzp1 = new Razorpay(options);
+            rzp1.open();
+        };
+    }
+</script>
+
+</body>
+</html>

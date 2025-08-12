@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Wishlist - Trezo</title>
+    <link rel="stylesheet" href="/css/styles.css"/>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #121212;
+            color: #E0E0E0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .wishlist-container {
+            width: 85%;
+            margin: auto;
+            padding: 2rem 0;
+        }
+
+        .wishlist-title {
+            text-align: center;
+            font-size: 2.4rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: #FF6F00;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .wishlist-card {
+            background: #1E1E1E;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .wishlist-card:hover {
+            transform: scale(1.03);
+        }
+
+        .wishlist-card img {
+            max-width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .wishlist-card h3 {
+            font-size: 1.3rem;
+            color: #FAFAFA;
+            margin: 0.6rem 0;
+        }
+
+        .wishlist-card p {
+            color: #B0BEC5;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .wishlist-card .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-add {
+            background: #FF6F00;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #e65c00;
+            transform: scale(1.05);
+        }
+
+        .btn-remove {
+            background: #03A9F4;
+            color: #fff;
+        }
+
+        .btn-remove:hover {
+            background: #0288D1;
+            transform: scale(1.05);
+        }
+
+        .wishlist-empty {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #B0BEC5;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="wishlist-container">
+    <div class="wishlist-title">🧡 Your Wishlist</div>
+
+    <!-- Empty Wishlist Message -->
+    <div class="empty-wishlist-container" th:if="${#lists.isEmpty(wishlistItems)}">
+        <p>Your wishlist is empty 😢</p>
+        <a th:href="@{/buyer/home}" class="btn btn-add">ADD ITEMS</a>
+    </div>
+
+    <!-- Wishlist Grid -->
+    <div class="wishlist-grid" th:if="${!#lists.isEmpty(wishlistItems)}">
+        <div class="wishlist-card" th:each="item : ${wishlistItems}">
+            <img th:src="${item.product.imageUrl != null} ? ${item.product.imageUrl} : '/images/default.png'" alt="Product Image"/>
+            <h3 th:text="${item.product.name}">Product Name</h3>
+            <p>₹ <span th:text="${item.product.price}">0.00</span></p>
+
+            <div class="actions">
+                <form th:action="@{'/cart/add/' + ${item.product.id}}" method="post">
+                    <button class="btn btn-add" type="submit">Add to Cart</button>
+                </form>
+                <form th:action="@{'/wishlist/remove/' + ${item.id}}" method="post">
+                    <button class="btn btn-remove" type="submit" onclick="return confirm('Remove this item from wishlist?');">Remove</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

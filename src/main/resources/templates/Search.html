@@ -1,0 +1,26 @@
+<!-- src/main/resources/templates/search-results.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Search Results</title>
+  <link rel="stylesheet" href="/css/styles.css"> <!-- optional CSS -->
+</head>
+<body>
+<h2>Search Results</h2>
+
+<!-- If no products found -->
+<div th:if="${#lists.isEmpty(products)}">
+  <p>No products matched your search 😢</p>
+</div>
+
+<!-- If products are found -->
+<div class="product-grid">
+  <div th:each="product : ${products}" class="product-card">
+    <h3 th:text="${product.name}">Product Name</h3>
+    <p th:text="${product.description}">Description</p>
+    <p>₹<span th:text="${product.price}">999</span></p>
+    <!-- Add image, add-to-cart button, etc. here -->
+  </div>
+</div>
+</body>
+</html>

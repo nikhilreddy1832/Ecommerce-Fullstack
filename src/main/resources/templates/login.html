@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Trezo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- Trezo / Verve Brand Style --- */
+        :root {
+            --primary-color: #4B0082;     /* Indigo Purple */
+            --secondary-color: #FF6B6B;   /* Neon Coral */
+            --background-color: #FAFAFA;  /* Soft Ivory */
+            --text-color: #343A40;
+            --light-gray: #CED4DA;        /* Cool Gray */
+            --link-color: #D67AB1;        /* Plum Pink */
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .auth-container {
+            width: 400px;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 16px;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.15);
+        }
+
+        .auth-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .auth-btn:hover {
+            background-color: #e55a5a;
+            transform: translateY(-2px);
+        }
+
+        .links-container {
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .register-link {
+            color: var(--text-color);
+        }
+
+        .register-link a {
+            color: var(--link-color);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-msg, .success-msg {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .error-msg {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success-msg {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+<div class="auth-container">
+    <div class="logo">Verve</div> <!-- You can change to Trezo -->
+    <p class="tagline">Shop with style and spirit.</p>
+
+    <div th:if="${success}" class="success-msg" th:text="${success}"></div>
+    <div th:if="${param.error}" class="error-msg">
+        Invalid username or password.
+    </div>
+    <div th:if="${param.logout}" class="success-msg">
+        You have been logged out successfully.
+    </div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="input-group">
+            <label for="username">Email or Username</label>
+            <input type="text" id="username" name="username" required />
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit" class="auth-btn">Log In</button>
+    </form>
+
+    <div class="links-container">
+        <span class="register-link">Don't have an account? <a href="/register">Sign Up</a></span>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name} + ' - Verve'"></title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f6;
+            margin: 40px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 40px;
+        }
+        .product-image {
+            flex: 1;
+        }
+        .product-image img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .product-details {
+            flex: 1;
+        }
+        .product-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: #282c3f;
+        }
+        .product-description {
+            font-size: 16px;
+            color: #535766;
+            margin-top: 10px;
+        }
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #282c3f;
+            margin-top: 20px;
+        }
+        .stock-status {
+            margin-top: 10px;
+            font-weight: 500;
+            color: #03a685; /* Green for in stock */
+        }
+        .stock-status.out {
+            color: #d32f2f; /* Red for out of stock */
+        }
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .add-to-cart {
+            background-color: #ff3e6c; /* Myntra-like pink */
+            color: white;
+        }
+        .add-to-wishlist {
+            background-color: #f5f5f6;
+            color: #282c3f;
+            border: 1px solid #d4d5d9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="product-image">
+        <img th:src="${product.imageUrl}" th:alt="${product.name}" />
+    </div>
+    <div class="product-details">
+        <h1 class="product-name" th:text="${product.name}">Product Name</h1>
+        <p class="product-description" th:text="${product.description}">Product description goes here.</p>
+        <div class="product-price" th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">₹0.00</div>
+
+        <div th:if="${product.stockQuantity > 0}" class="stock-status">In Stock</div>
+        <div th:if="${product.stockQuantity <= 0}" class="stock-status out">Out of Stock</div>
+
+        <div class="actions">
+            <form th:action="@{|/cart/add/${product.id}|}" method="post" th:if="${product.stockQuantity > 0}">
+                <button type="submit" class="action-btn add-to-cart">ADD TO CART</button>
+            </form>
+            <form th:action="@{|/wishlist/add/${product.id}|}" method="post">
+                <button type="submit" class="action-btn add-to-wishlist">WISHLIST</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
